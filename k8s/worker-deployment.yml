@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+spec:
+  replicas: 1 # concerns all containers in this file
+  selector:
+    # match pod labels to create replicas
+    matchLabels:
+      component: worker
+  # POD information and its containers section
+  template:
+    metadata:
+      labels:
+        component: worker # pod labels used for replicas and services
+    spec:
+      containers:
+        - name: worker
+          image: elie29/worker:latest
+          resources:
+            requests:
+              cpu: '200m'
+              memory: '64Mi'
+            limits:
+              cpu: '500m'
+              memory: '128Mi'
+          env:
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service # redis service name
+            - name: REDIS_PORT
+              value: '6379'
+# no exposed port needed for this service

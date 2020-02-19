@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 3 # concerns all containers in this file
+  selector:
+    # match pod labels to create replicas
+    matchLabels:
+      component: web
+  # POD information and its containers section
+  template:
+    metadata:
+      labels:
+        component: web # pod labels used for replicas and services
+    spec:
+      containers:
+        - name: client
+          image: elie29/client:latest
+          resources:
+            requests:
+              cpu: '200m'
+              memory: '64Mi'
+            limits:
+              cpu: '500m'
+              memory: '128Mi'
+          ports:
+            - containerPort: 3000 # container exposed port

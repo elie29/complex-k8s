@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis-cluster-ip-service
+spec:
+  selector:
+    component: redis # pod redis selector
+  type: ClusterIP
+  ports:
+    - port: 6379 # exposed port for other pods and ingress, no need to change it
+      targetPort: 6379 # container port

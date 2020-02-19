@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgres-cluster-ip-service
+spec:
+  selector:
+    component: postgres # pod postgres selector
+  type: ClusterIP
+  ports:
+    - port: 5432 # exposed port for other pods and ingress, no need ti change it
+      targetPort: 5432 # container port

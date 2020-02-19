@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 3 # concerns all containers in this file
+  selector:
+    # match pod labels to create replicas
+    matchLabels:
+      component: server
+  # POD information and its containers section
+  template:
+    metadata:
+      labels:
+        component: server # pod labels used for replicas and services
+    spec:
+      containers:
+        - name: server
+          image: elie29/server:latest
+          resources:
+            requests:
+              cpu: '200m'
+              memory: '64Mi'
+            limits:
+              cpu: '500m'
+              memory: '128Mi'
+          ports:
+            - containerPort: 5000 # container exposed port
+          env:
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service # redis service name
+            - name: REDIS_PORT
+              value: '6379'
+            - name: PGUSER
+              value: postgres
+            - name: PGHOST
+              value: postgres-cluster-ip-service # postgres service name
+            - name: PGPORT
+              value: '5432'
+            - name: PGDATABASE
+              value: postgres
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret # secret object name
+                  key: PGPASSWORD

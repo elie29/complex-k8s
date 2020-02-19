@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+spec:
+  replicas: 1 # concerns all containers in this file
+  selector:
+    # match pod labels to create replicas
+    matchLabels:
+      component: redis
+  # POD information and its containers section
+  template:
+    metadata:
+      labels:
+        component: redis # pod labels used for replicas and services
+    spec:
+      containers:
+        - name: redis
+          image: redis:5.0.7-alpine3.11
+          resources:
+            requests:
+              cpu: '200m'
+              memory: '64Mi'
+            limits:
+              cpu: '500m'
+              memory: '128Mi'
+          ports:
+            - containerPort: 6379 # redis default exposed port.
+

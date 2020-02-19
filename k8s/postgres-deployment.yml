@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1 # concerns all containers in this file. Do not make many replicas on the same PVC!!
+  selector:
+    # match pod labels to create replicas
+    matchLabels:
+      component: postgres
+  # POD information and its containers section
+  template:
+    metadata:
+      labels:
+        component: postgres # pod labels used for replicas and services
+    spec:
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: database-persistent-volume-claim
+      containers:
+        - name: postgres
+          image: postgres:12.1-alpine
+          resources:
+            requests:
+              cpu: '250m'
+              memory: '128Mi'
+            limits:
+              cpu: '500m'
+              memory: '256Mi'
+          ports:
+            - containerPort: 5432 # postgres default exposed port.
+          volumeMounts: # same as volume in docker
+            - name: postgres-storage # same name as in volumes
+              mountPath: /var/lib/postgres/data # path to the stored data in postgres
+              subPath: postgres # needed for postgres instead of root's volume
+          env:
+            - name: POSTGRES_PASSWORD # change postgres default password
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret # secret object name
+                  key: PGPASSWORD
+      restartPolicy: Always
