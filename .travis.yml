@@ -10,7 +10,9 @@ before_install:
   - gcloud version || true
   # install gcloud if not already installed
   - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
+  # Add gcloud to $PATH
   - source $HOME/google-cloud-sdk/path.bash.inc
+  - gcloud version
   - gcloud components update kubectl
   - gcloud auth activate-service-account --key-file service-account.json
   - gcloud container clusters get-credentials standard-cluster-1 --zone us-central1-a --project kubernetes-udemy-264217
@@ -19,14 +21,29 @@ before_install:
 
 script:
   - docker run -e CI=true elie29/react-test:latest npm run test
+  - echo "$SHA"
 
 after_success:
   # build production images: Continuous Integration (CInt) phase
-  - docker build -t elie29/client:latest ./client
-  - docker build -t elie29/server:latest ./server
-  - docker build -t elie29/worker:latest ./worker
+  - docker build -t elie29/client:latest -t elie29/client:$SHA ./client
+  - docker build -t elie29/server:latest -t elie29/server:$SHA ./server
+  - docker build -t elie29/worker:latest -t elie29/worker:$SHA ./worker
   # Continuous Delivery (CDel) Phase
   ## Take those images and push them to docker hub
   - docker push elie29/client:latest
   - docker push elie29/server:latest
   - docker push elie29/worker:latest
+  - docker push elie29/client:$SHA
+  - docker push elie29/server:$SHA
+  - docker push elie29/worker:$SHA
+
+# Continuous Deployment (CDep) when merge to master or master changed
+deploy:
+  provider: script
+  script: bash deploy.sh
+  on:
+    branch: master
+
+notifications:
+  email:
+    on_success: never
