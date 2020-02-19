@@ -26,7 +26,6 @@ before_install:
 
 script:
   - docker run -e CI=true elie29/react-test:latest npm run test
-  - echo "$SHA"
 
 after_success:
   # build production images: Continuous Integration (CInt) phase
