@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: server-deployment
 spec:
-  replicas: 3 # concerns all containers in this file
+  replicas: 1 # concerns all containers in this file
   selector:
     # match pod labels to create replicas
     matchLabels:
