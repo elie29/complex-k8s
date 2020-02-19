@@ -21,7 +21,7 @@ before_install:
   - gcloud version
   - gcloud components update kubectl
   - gcloud auth activate-service-account --key-file service-account.json
-  - gcloud container clusters get-credentials standard-cluster-1 --zone us-central1-a --project kubernetes-udemy-264217
+  # - gcloud container clusters get-credentials standard-cluster-1 --zone us-central1-a --project kubernetes-udemy-264217
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   - docker build -t elie29/react-test:latest -f ./client/Dockerfile.dev ./client
 
