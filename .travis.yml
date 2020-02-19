@@ -1,9 +1,15 @@
 services:
   - docker
 
+cache:
+  directories:
+    - '$HOME/google-cloud-sdk/'
+
 before_install:
   - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
-  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  - gcloud version || true
+  # install gcloud if not already installed
+  - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components update kubectl
   - gcloud auth activate-service-account --key-file service-account.json
@@ -16,11 +22,11 @@ script:
 
 after_success:
   # build production images: Continuous Integration (CInt) phase
-  - docker build -t elie29/multi-client:latest ./client
-  - docker build -t elie29/multi-server:latest ./server
-  - docker build -t elie29/multi-worker:latest ./worker
+  - docker build -t elie29/client:latest ./client
+  - docker build -t elie29/server:latest ./server
+  - docker build -t elie29/worker:latest ./worker
   # Continuous Delivery (CDel) Phase
   ## Take those images and push them to docker hub
-  - docker push elie29/multi-client:latest
-  - docker push elie29/multi-server:latest
-  - docker push elie29/multi-worker:latest
+  - docker push elie29/client:latest
+  - docker push elie29/server:latest
+  - docker push elie29/worker:latest
