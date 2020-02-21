@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import OtherPage from './OtherPage';
+
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+
 import Fib from './Fib';
+import logo from './logo.svg';
+import OtherPage from './OtherPage';
 
 class App extends Component {
   render() {
