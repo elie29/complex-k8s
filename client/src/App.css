@@ -14,12 +14,21 @@
   color: white;
 }
 
+.App-header a {
+  color: beige;
+  margin-right: 4px;
+}
+
 .App-title {
   font-size: 1.5em;
 }
 
 .App-intro {
   font-size: large;
+}
+
+form {
+  margin: 16px;
 }
 
 @keyframes App-logo-spin {
